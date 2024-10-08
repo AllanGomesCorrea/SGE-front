@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Home from './pages/Home'
+import Path from './Routes';
 
 const App= () => (
 
     <>
       <React.StrictMode>
-          <Home />
+          <Path />
       </React.StrictMode>
     </>
 )
