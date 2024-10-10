@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import * as S from './styles'; // Certifique-se de que o caminho está correto
+import * as S from './styles';
+import MaskedInput from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 function ProductsForm({ onSubmit }) {
     const [formData, setFormData] = useState({
@@ -12,32 +14,25 @@ function ProductsForm({ onSubmit }) {
         sellingPrice: ''
     });
 
-    const formatCurrency = (value) => {
-        const cleanedValue = value.replace(/\D/g, '');
-
-        if (cleanedValue.length === 0) {
-            return '0,00';
-        }
-
-        const cents = cleanedValue.slice(-2);
-        const dollars = cleanedValue.slice(0, -2);
-        return `${dollars.replace(/\B(?=(\d{3})+(?!\d))/g, ".")},${cents.padStart(2, '0')}`;
-    };
+    // Definindo a máscara para preços
+    const currencyMask = createNumberMask({
+        prefix: 'R$ ',
+        suffix: '',
+        includeThousandsSeparator: true,
+        thousandsSeparatorSymbol: '.',
+        allowDecimal: true,
+        decimalSymbol: ',',
+        decimalLimit: 2,
+        allowNegative: false,
+        allowLeadingZeroes: false,
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        if (name === 'costPrice' || name === 'sellingPrice') {
-            setFormData({
-                ...formData,
-                [name]: formatCurrency(value),
-            });
-        } else {
-            setFormData({
-                ...formData,
-                [name]: value,
-            });
-        }
+        setFormData({
+            ...formData,
+            [name]: value,
+        });
     };
 
     const handleSubmit = (e) => {
@@ -69,11 +64,27 @@ function ProductsForm({ onSubmit }) {
             </S.FormGroup>
             <S.FormGroup>
                 <S.Label>Preço de Custo:</S.Label>
-                <S.Input type="text" name="costPrice" value={formData.costPrice} onChange={handleChange} />
+                <MaskedInput
+                    mask={currencyMask}
+                    name="costPrice"
+                    value={formData.costPrice}
+                    onChange={handleChange}
+                    render={(ref, props) => (
+                        <S.Input ref={ref} {...props} />
+                    )}
+                />
             </S.FormGroup>
             <S.FormGroup>
                 <S.Label>Preço de Venda:</S.Label>
-                <S.Input type="text" name="sellingPrice" value={formData.sellingPrice} onChange={handleChange} />
+                <MaskedInput
+                    mask={currencyMask}
+                    name="sellingPrice"
+                    value={formData.sellingPrice}
+                    onChange={handleChange}
+                    render={(ref, props) => (
+                        <S.Input ref={ref} {...props} />
+                    )}
+                />
             </S.FormGroup>
             <S.Button type="submit">Salvar</S.Button>
         </S.FormContainer>
