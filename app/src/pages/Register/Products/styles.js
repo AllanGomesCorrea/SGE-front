@@ -14,7 +14,7 @@ export const MainContent = styled.div`
     align-items: flex-start;
     padding: 0px;
     margin-left: 20px;
-    margin-right: 20px; /* Espaço reservado para o sidebar */
+    margin-right: 20px;
 `;
 
 export const ContentWrapper = styled.div`

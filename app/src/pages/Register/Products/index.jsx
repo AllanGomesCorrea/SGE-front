@@ -4,6 +4,7 @@ import Footer from '../../../components/Footer';
 import Sidebar from '../../../components/Sidebar';
 import { useState, useEffect } from 'react';
 import ProductsTable from '../../../components/ProductsTable'
+import ProductsModalButton from '../../../components/Modal/ProductsModalButton'
 
 
 function Products(){
@@ -35,6 +36,7 @@ function Products(){
             <S.ContentWrapper>
                 <Sidebar />
                 <S.MainContent>
+                    <ProductsModalButton />
                     <ProductsTable products={products} />
                 </S.MainContent>
             </S.ContentWrapper>
