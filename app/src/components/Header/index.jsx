@@ -9,7 +9,7 @@ const menuMap = {
   '/register': 'Cadastro',
   '/recompensas': 'Recompensas',
   '/campanhas': 'Campanhas',
-  '/taxas': 'Taxas'
+  '/login': 'Login'
 };
 
 

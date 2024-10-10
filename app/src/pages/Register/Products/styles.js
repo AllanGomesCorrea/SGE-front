@@ -10,10 +10,11 @@ export const MainContent = styled.div`
     flex: 1; /* Faz com que este conteúdo ocupe o espaço disponível, empurrando o footer para o fim */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    margin-left: 200px; /* Espaço reservado para o sidebar */
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 0px;
+    margin-left: 20px;
+    margin-right: 20px; /* Espaço reservado para o sidebar */
 `;
 
 export const ContentWrapper = styled.div`
