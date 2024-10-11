@@ -35,9 +35,45 @@ function ProductsForm({ onSubmit }) {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        onSubmit(formData);
+        
+        // Formatando os preços para o formato esperado pela API
+        const formatPrice = (price) => {
+            return price.replace('R$ ', '').replace('.', '').replace(',', '.');
+        };
+
+        const payload = {
+            title: formData.title,
+            description: formData.description,
+            serie_number: formData.serialNumber,
+            cost_price: formatPrice(formData.costPrice),
+            selling_price: formatPrice(formData.sellingPrice),
+            quantity: formData.quantity,
+            category: parseInt(formData.category, 10),
+            brand: parseInt(formData.brand, 10),
+        };
+
+        try {
+            const response = await fetch('http://localhost:8000/api/v1/products/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Produto adicionado com sucesso:', data);
+                onSubmit(data);
+            } else {
+                console.error('Erro ao adicionar produto:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro de rede:', error);
+        }
     };
 
     return (
