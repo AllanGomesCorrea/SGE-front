@@ -2,19 +2,18 @@ import * as S from './styles';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import Sidebar from '../../../components/Sidebar';
-import { useState, useEffect } from 'react';
-import ProductsTable from '../../../components/ProductsTable'
-import ProductsModalButton from '../../../components/Modal/ProductsModalButton'
+import { useState, useEffect, useCallback } from 'react';
+import ProductsTable from '../../../components/ProductsTable';
+import ProductsModalButton from '../../../components/Modal/ProductsModalButton';
 
-
-function Products(){
-
+function Products() {
     const [products, setProducts] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
 
-    const fetchProducts = () => {
+    // Usando useCallback para memorizar a função fetchProducts
+    const fetchProducts = useCallback(() => {
         const token = localStorage.getItem('accessToken');
 
         fetch(`http://localhost:8000/api/v1/products/?page=${currentPage}&page_size=${itemsPerPage}`, {
@@ -30,12 +29,12 @@ function Products(){
             setTotalPages(Math.ceil(data.count / itemsPerPage));
         })
         .catch((error) => console.log(error));
-    };
+    }, [currentPage, itemsPerPage]); // Adiciona as dependências corretas
 
+    // useEffect que chama fetchProducts
     useEffect(() => {
         fetchProducts();
-    }, [currentPage, itemsPerPage]);
-
+    }, [fetchProducts]);
 
     const handleItemsPerPageChange = (e) => {
         setItemsPerPage(Number(e.target.value));
@@ -78,4 +77,5 @@ function Products(){
         </S.PageContainer>
     );
 }
+
 export default Products;
