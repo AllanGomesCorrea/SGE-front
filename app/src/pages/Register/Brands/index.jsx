@@ -24,7 +24,7 @@ function Brands(){
         })
         .then(response => response.json())
         .then((data) => {
-            const formattedData = Array.isArray(data) ? data : [data];
+            const formattedData = Array.isArray(data.results) ? data.results : [data.results];
             setBrands(formattedData);
         })
         .catch((error) => console.log(error));

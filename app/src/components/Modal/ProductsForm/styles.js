@@ -65,3 +65,17 @@ export const Button = styled.button`
         background-color: ${colors.lightBlue};
     }
 `;
+
+export const Select = styled.select`
+    padding: 10px;
+    border: 1px solid ${colors.darkBlue};
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    width: 104%;
+
+    &:focus {
+        border-color: ${colors.darkBlue};
+        outline: none;
+    }
+`;

@@ -18,6 +18,47 @@ export const MainContent = styled.div`
 `;
 
 export const ContentWrapper = styled.div`
-  display: flex;
-  flex: 1;
+    display: flex;
+    flex: 1;
+`;
+
+// Novo estilo para o select
+export const Select = styled.select`
+    margin: 10px 0;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+`;
+
+// Contêiner para a paginação
+export const PaginationContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+`;
+
+// Botões de paginação
+export const Button = styled.button`
+    padding: 8px 16px;
+    margin: 0 5px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: none;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+
+    &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+`;
+
+// Indicador de página
+export const PageIndicator = styled.span`
+    margin: 0 10px;
+    font-size: 16px;
 `;

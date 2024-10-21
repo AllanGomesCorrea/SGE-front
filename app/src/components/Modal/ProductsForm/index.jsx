@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as S from './styles';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
-function ProductsForm({ onSubmit }) {
+
+function ProductsForm({ fetchProducts, onClose }) {
     const [formData, setFormData] = useState({
         title: '',
         category: '',
@@ -13,6 +14,34 @@ function ProductsForm({ onSubmit }) {
         costPrice: '',
         sellingPrice: ''
     });
+
+
+    const [brands, setBrands] = useState([]);
+
+    useEffect(() => {
+        const fetchBrands = async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/brands/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setBrands(Array.isArray(data.results) ? data.results : [data.results]);
+                } else {
+                    console.error('Erro ao buscar marcas:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erro de rede ao buscar marcas:', error);
+            }
+        };
+
+        fetchBrands();
+    }, []);
 
     // Definindo a máscara para preços
     const currencyMask = createNumberMask({
@@ -42,7 +71,7 @@ function ProductsForm({ onSubmit }) {
         const formatPrice = (price) => {
             return price.replace('R$ ', '').replace('.', '').replace(',', '.');
         };
-
+    
         const payload = {
             title: formData.title,
             description: formData.description,
@@ -53,7 +82,7 @@ function ProductsForm({ onSubmit }) {
             category: parseInt(formData.category, 10),
             brand: parseInt(formData.brand, 10),
         };
-
+    
         try {
             const response = await fetch('http://localhost:8000/api/v1/products/', {
                 method: 'POST',
@@ -63,11 +92,12 @@ function ProductsForm({ onSubmit }) {
                 },
                 body: JSON.stringify(payload),
             });
-
+    
             if (response.ok) {
-                const data = await response.json();
-                console.log('Produto adicionado com sucesso:', data);
-                onSubmit(data);
+                //const data = await response.json();
+                console.log('Produto adicionado com sucesso');
+                fetchProducts();
+                onClose();
             } else {
                 console.error('Erro ao adicionar produto:', response.statusText);
             }
@@ -75,6 +105,7 @@ function ProductsForm({ onSubmit }) {
             console.error('Erro de rede:', error);
         }
     };
+    
 
     return (
         <S.FormContainer onSubmit={handleSubmit}>
@@ -88,7 +119,14 @@ function ProductsForm({ onSubmit }) {
             </S.FormGroup>
             <S.FormGroup>
                 <S.Label>Marca:</S.Label>
-                <S.Input type="text" name="brand" value={formData.brand} onChange={handleChange} />
+                <S.Select name="brand" value={formData.brand} onChange={handleChange}>
+                    <option value="">Selecione uma marca</option>
+                    {brands.map((brand) => (
+                        <option key={brand.id} value={brand.id}>
+                            {brand.name}
+                        </option>
+                    ))}
+                </S.Select>
             </S.FormGroup>
             <S.FormGroup>
                 <S.Label>Descrição:</S.Label>
