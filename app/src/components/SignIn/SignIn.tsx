@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -16,6 +18,7 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import { GoogleIcon } from './CustomIcons';
 import AppTheme from '../theme/AppTheme';
+import ColorModeSelect from '../theme/ColorModeSelect';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -65,6 +68,11 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  // login required to get token
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [isFormValid, setIsFormValid] = useState(false);
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -74,49 +82,81 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
-
   const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
-
     let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    if (!username || username.length < 4) {
       setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+      setEmailErrorMessage('Please enter a valid username.');
       isValid = false;
     } else {
       setEmailError(false);
       setEmailErrorMessage('');
+      setUsername(username);
     }
 
-    if (!password.value || password.value.length < 6) {
+    if (!password || password.length < 1) {
       setPasswordError(true);
       setPasswordErrorMessage('Password must be at least 6 characters long.');
       isValid = false;
     } else {
       setPasswordError(false);
       setPasswordErrorMessage('');
+      setPassword(password)
     }
 
-    return isValid;
+   setIsFormValid(isValid);
+  };
+
+
+  const handleLogin = useCallback(() => {
+    fetch('http://localhost:8000/api/v1/authentication/token/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username,
+            password,
+        }),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro na autenticação');
+        }
+        return response.json();
+    })
+    .then((data) => {
+        if (data.access && data.refresh) {
+            localStorage.setItem('accessToken', data.access);
+            localStorage.setItem('refreshToken', data.refresh);
+            navigate('/');
+        } else {
+            console.error('Erro de autenticação: tokens não encontrados.');
+        }
+    })
+    .catch((error) => console.error('Erro:', error));
+  },[username, password, navigate]);
+
+  useEffect(() => {
+    if (isFormValid) {
+      handleLogin();
+    }
+  }, [isFormValid, handleLogin, username, password, navigate]);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    validateInputs();
+    if (isFormValid) {
+      handleLogin();
+    }
   };
 
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
       <SignInContainer direction="column" justifyContent="space-between">
+      <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           <Typography
             component="h1"
@@ -137,16 +177,17 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="email">Usuário</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
+                id="username"
+                type="text"
+                name="username"
+                placeholder="Enter your username"
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
                 fullWidth
                 variant="outlined"
@@ -156,7 +197,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             </FormControl>
             <FormControl>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <FormLabel htmlFor="password">Password</FormLabel>
+                <FormLabel htmlFor="password">Senha</FormLabel>
                 <Link
                   component="button"
                   type="button"
@@ -175,7 +216,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 fullWidth
                 variant="outlined"
@@ -191,7 +233,6 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
             >
               Sign in
             </Button>
