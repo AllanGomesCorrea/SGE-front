@@ -207,17 +207,8 @@ export default function ProductsTable({
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
 
-  // Calculate empty rows
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - products.length) : 0;
-
-  // Get visible rows
-  const visibleRows = React.useMemo(
-    () =>
-      [...products]
-        .sort(getComparator(order, orderBy))
-        .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage, products]
-  );
+  // Ordena os produtos de acordo com a ordem e coluna selecionadas
+  const sortedProducts = products.slice().sort(getComparator(order, orderBy));
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -238,7 +229,7 @@ export default function ProductsTable({
               rowCount={products.length}
             />
             <TableBody>
-              {products.map((product, index) => {
+              {sortedProducts.map((product, index) => {
                 const isItemSelected = isSelected(product.id);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
