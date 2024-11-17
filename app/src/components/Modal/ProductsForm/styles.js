@@ -6,7 +6,7 @@ export const FormContainer = styled.form`
     flex-direction: column;
     background: ${colors.white};
     padding-left: 0px;
-    padding-right: 45px;
+    padding-right: 22px;
     max-width: 600px;
 `;
 

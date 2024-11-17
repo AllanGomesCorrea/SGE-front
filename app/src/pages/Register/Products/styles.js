@@ -15,6 +15,7 @@ export const MainContent = styled.div`
     padding: 0px;
     margin-left: 20px;
     margin-right: 20px;
+    gap: 20px;
 `;
 
 export const ContentWrapper = styled.div`

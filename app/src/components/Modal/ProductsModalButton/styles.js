@@ -12,7 +12,6 @@ export const ModalButton = styled.button`
     cursor: pointer;
     font-size: 16px;
     font-weight: 600;
-    position: absolute;
     right: 25px; /* Alinha o botão à direita */
     margin-top: 35px;
     transition: background-color 0.3s;

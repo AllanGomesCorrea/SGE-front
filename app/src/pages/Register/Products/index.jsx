@@ -53,7 +53,6 @@ function Products() {
                 <Sidebar />
                 <S.MainContent>
                     <ProductsModalButton fetchProducts={fetchProducts} />
-                    
                     <ProductsTable 
                         products={products}
                         page={currentPage}

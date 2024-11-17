@@ -7,8 +7,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const menuMap = {
   '/': 'Home',
   '/register': 'Cadastro',
-  '/recompensas': 'Recompensas',
-  '/campanhas': 'Campanhas',
+  //'/recompensas': 'Recompensas',
+  //'/campanhas': 'Campanhas',
   '/login': 'Login'
 };
 

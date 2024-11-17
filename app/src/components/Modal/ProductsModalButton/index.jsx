@@ -10,12 +10,12 @@ function ProductsModalButton({ fetchProducts }) {
     const closeModal = () => setIsModalOpen(false);
 
     return (
-        <div>
+        <>
             <S.ModalButton onClick={openModal}>Adicionar Produto</S.ModalButton>
             <Modal isOpen={isModalOpen} onClose={closeModal} title={'Adicionar Produto'}>
                 <ProductsForm fetchProducts={fetchProducts} onClose={closeModal} />
             </Modal>
-        </div>
+        </>
     );
 }
 
