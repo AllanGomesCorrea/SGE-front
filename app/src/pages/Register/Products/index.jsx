@@ -5,6 +5,7 @@ import Sidebar from '../../../components/Sidebar';
 import { useState, useEffect, useCallback } from 'react';
 import ProductsTable from '../../../components/ProductsTable';
 import ProductsModalButton from '../../../components/Modal/ProductsModalButton';
+import Search from '../../../components/Search';
 
 function Products() {
     const [products, setProducts] = useState([]);
@@ -52,7 +53,10 @@ function Products() {
             <S.ContentWrapper>
                 <Sidebar />
                 <S.MainContent>
-                    <ProductsModalButton fetchProducts={fetchProducts} />
+                    <S.HeaderAndSearchContainer>
+                        <ProductsModalButton fetchProducts={fetchProducts} />
+                        <Search />
+                    </S.HeaderAndSearchContainer>
                     <ProductsTable 
                         products={products}
                         page={currentPage}
