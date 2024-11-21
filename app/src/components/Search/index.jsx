@@ -25,7 +25,7 @@ const SearchIconWrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: '100%',
   position: 'absolute',
-  pointerEvents: 'none',
+  //pointerEvents: 'none',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -48,7 +48,23 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar({ searchText, setSearchText, onSearch}) {
+  
+  const handleInputChange = (e) => {
+    setSearchText(e.target.value);
+  };
+  
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+        onSearch();
+    }
+  };
+  
+  //If click is needed, just call the function
+  const handleSearchClick = () => {
+    onSearch();
+  };
+  
   return (
     <Box sx={{ flexGrow: 1 }}>
       
@@ -60,6 +76,10 @@ export default function SearchAppBar() {
             <StyledInputBase
               placeholder="Buscar…"
               inputProps={{ 'aria-label': 'search' }}
+              type="text"
+              value={searchText}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
             />
           </Search>
         </Toolbar>

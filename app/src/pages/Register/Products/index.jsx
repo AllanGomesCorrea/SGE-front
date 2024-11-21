@@ -12,6 +12,8 @@ function Products() {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [totalPages, setTotalPages] = useState(1);
+    const [searchText, setSearchText] = useState('');
+    const [filteredData, setFilteredData] = useState(null);
 
     // Usando useCallback para memorizar a função fetchProducts
     const fetchProducts = useCallback(() => {
@@ -46,6 +48,20 @@ function Products() {
         setCurrentPage(1); // Reinicia para a primeira página ao mudar o número de itens por página
     };
 
+    // Use search for selected columns
+    const handleSearch = () => {
+        if (searchText.length > 0) {
+            const results = products.filter(item =>
+                item.id.toString().includes(searchText) ||
+                item.title.toLowerCase().includes(searchText.toLowerCase()) ||
+				item.description.toLowerCase().includes(searchText.toLowerCase())
+            );
+            setFilteredData(results); 
+        } else {
+            setFilteredData(products);
+        }
+    };
+
 
     return (
         <S.PageContainer>
@@ -55,10 +71,14 @@ function Products() {
                 <S.MainContent>
                     <S.HeaderAndSearchContainer>
                         <ProductsModalButton fetchProducts={fetchProducts} />
-                        <Search />
+                        <Search 
+                            searchText={searchText}
+							setSearchText={setSearchText}
+							onSearch={handleSearch}
+                        />
                     </S.HeaderAndSearchContainer>
                     <ProductsTable 
-                        products={products}
+                        products={filteredData ?  filteredData : products}
                         page={currentPage}
                         rowsPerPage={itemsPerPage}
                         totalPages={totalPages}
