@@ -6,6 +6,7 @@ import { useState, useEffect, useCallback } from 'react';
 import ProductsTable from '../../../components/ProductsTable';
 import ProductsModalButton from '../../../components/Modal/ProductsModalButton';
 import Search from '../../../components/Search';
+import getProducts from '../../../Api/getProducts';
 
 function Products() {
     const [products, setProducts] = useState([]);
@@ -17,21 +18,12 @@ function Products() {
 
     // Usando useCallback para memorizar a função fetchProducts
     const fetchProducts = useCallback(() => {
-        const token = localStorage.getItem('accessToken');
-
-        fetch(`http://localhost:8000/api/v1/products/?page=${currentPage}&page_size=${itemsPerPage}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            }
-        })
-        .then(response => response.json())
-        .then((data) => {
-            setProducts(data.results || []);
-            setTotalPages(Math.ceil(data.count / itemsPerPage));
-        })
-        .catch((error) => console.log(error));
+        getProducts(currentPage, itemsPerPage)
+            .then(data => {
+                setProducts(data.results || []);
+                setTotalPages(Math.ceil(data.count / itemsPerPage));
+            })
+            .catch(error => console.log(error));
     }, [currentPage, itemsPerPage]); // Adiciona as dependências corretas
 
     // useEffect que chama fetchProducts
